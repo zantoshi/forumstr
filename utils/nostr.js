@@ -28,8 +28,7 @@ export const closeConnectionToRelay = async (relay) => {
 };
 
 export const getForums = async () => {
-  const relay = relayInit("wss://relay.damus.io");
-
+  const relay = relayInit("wss://nos.lol");
   relay.on("connect", () => {
     console.log(`connected to ${relay.url}`);
   });
@@ -37,26 +36,15 @@ export const getForums = async () => {
     console.log(`failed to connect to ${relay.url}`);
   });
 
-  relay.connect();
-  console.log("Relay connected. Getting event.");
+  await relay.connect();
 
-  let sub = relay.sub([
-    {
-      ids: ["d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027"],
-    },
-  ]);
-
-  sub.on("event", (event) => {
-    console.log("we got the event we wanted:", event);
-    let forums = event;
-  });
-
-  sub.on("eose", () => {
-    sub.unsub();
-  });
-
+  let events = [
+    await relay.get({
+      ids: ["b9f6a96e686055421bed6fcad7c1a9bdd0a3016a5e2ccb453c54e9c63ebcea61"],
+    }),
+  ];
   relay.close();
-  return forums;
+  return events;
 };
 
 export const getForumDetail = async ({ forumId }) => {
