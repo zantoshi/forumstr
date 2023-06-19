@@ -7,11 +7,10 @@ const ForumList = async () => {
   return (
     <>
       {forums.map((forum) => {
-        console.log(forum);
         return (
           <Forum
-            subject={forum.kind}
-            description={forum.content}
+            subject={forum.tags[0][1]}
+            description={forum.tags[1][1]}
             key={forum.id}
             id={forum.id}
           />

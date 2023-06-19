@@ -1,32 +1,30 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createComment } from "@/utils/nostr";
+import Link from "next/link";
 
-const create = async ({ threadId }) => {
-  const router = useRouter();
-  createComment({ threadId, content });
-  router.refresh();
+const create = async (event, threadId) => {
+  event.preventDefault();
+  const content = event.target.elements.content.value;
+  const commentId = await createComment({ threadId, content });
+  console.log(commentId);
 };
 
 export default function CreateComment({ params }) {
-  const [content, setContent] = useState("");
-
   return (
     <div className="container">
-      <form onSubmit={(e) => create(params.forumId)}>
+      <Link href={`/forum/${params.forumId}/thread/${params.threadId}/`}>
+        Back to Thread
+      </Link>
+
+      <form onSubmit={(e) => create(e, params.threadId)}>
         <div className="mb-3">
-          <label for="commentContent" className="form-label">
-            Content
-          </label>
+          <label className="form-label">Comment</label>
           <textarea
             className="form-control"
             id="commentContent"
             rows="3"
-            value={content}
-            onChange={(e) => {
-              setContent(e.target.value);
-            }}
+            name="content"
+            required
           ></textarea>
         </div>
         <button type="submit" className="btn btn-primary">

@@ -1,3 +1,4 @@
+import Link from "next/link";
 const Forum = ({ id, subject, description }) => {
   const styles = {
     backgroundColor: "black",
@@ -5,12 +6,11 @@ const Forum = ({ id, subject, description }) => {
   };
   return (
     <>
-      <a href={`/forum/${id}`}>
-        <div style={styles} className="row">
-          <h3>{subject}</h3>
-          <p>{description}</p>
-        </div>
-      </a>
+      <div style={styles} className="row p-4 mt-4">
+        <h3>{subject}</h3>
+        <p>{description}</p>
+        <Link href={`/forum/${id}`}>View Forum</Link>
+      </div>
     </>
   );
 };

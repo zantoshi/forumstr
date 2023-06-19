@@ -10,24 +10,6 @@ let sk = generatePrivateKey(); // `sk` is a hex string
 let pk = getPublicKey(sk); // `pk` is a hex string
 
 export const connectToRelay = async () => {
-  const relay = relayInit("wss://relay.damus.io");
-
-  relay.on("connect", () => {
-    console.log(`connected to ${relay.url}`);
-  });
-  relay.on("error", () => {
-    console.log(`failed to connect to ${relay.url}`);
-  });
-
-  relay.connect();
-  return relay;
-};
-
-export const closeConnectionToRelay = async (relay) => {
-  relay.close();
-};
-
-export const getForums = async () => {
   const relay = relayInit("wss://nos.lol");
   relay.on("connect", () => {
     console.log(`connected to ${relay.url}`);
@@ -37,86 +19,92 @@ export const getForums = async () => {
   });
 
   await relay.connect();
+  return relay;
+};
+
+export const closeConnectionToRelay = async (relay) => {
+  await relay.close();
+};
+
+export const getForums = async () => {
+  const relay = await connectToRelay();
 
   let events = [
     await relay.get({
-      ids: ["b9f6a96e686055421bed6fcad7c1a9bdd0a3016a5e2ccb453c54e9c63ebcea61"],
+      ids: ["52016814e8cbe714c47b76a5bea8876ce2c416a0f6f2eca20785d9460a6c292f"],
     }),
   ];
-  relay.close();
+  await closeConnectionToRelay(relay);
+
   return events;
 };
 
-export const getForumDetail = async ({ forumId }) => {
-  const relay = connectToRelay();
+export const getForumDetail = async (forumId) => {
+  const relay = await connectToRelay();
 
-  let sub = relay.sub([
-    {
-      // this will be hardcoded for now
-      ids: [forumId],
-    },
-  ]);
-  sub.on("event", (event) => {
-    console.log("we got the event we wanted:", event);
+  let event = await relay.get({
+    ids: [forumId],
   });
-  sub.on("eose", () => {
-    sub.unsub();
-  });
-  closeConnectionToRelay(relay);
-  console.log(sub);
+
+  await closeConnectionToRelay(relay);
+
+  let forumDetail = {
+    subject: event.tags[0][1],
+    description: event.tags[1][1],
+  };
+
+  return forumDetail;
 };
 
-export const getThreads = async ({ forumId }) => {
-  const relay = connectToRelay();
+export const getThreads = async (forumId) => {
+  const relay = await connectToRelay();
 
-  let sub = relay.sub([
-    {
-      kinds: [10],
-      ids: [{ forumId }],
-    },
-  ]);
-  sub.on("event", (event) => {
-    console.log("we got the event we wanted:", event);
-  });
-  sub.on("eose", () => {
-    sub.unsub();
-  });
+  let events = [await relay.get({ "#e": [forumId], kinds: [10] })];
+  await closeConnectionToRelay(relay);
 
-  closeConnectionToRelay(relay);
-  console.log(sub);
+  return events;
 };
 
-export const getThreadAndComments = async ({ threadId }) => {
-  const relay = connectToRelay();
+export const getThreadDetail = async (threadId) => {
+  const relay = await connectToRelay();
 
-  let sub = relay.sub([
-    {
-      kinds: [10, 11],
-      ids: [{ threadId }],
-    },
-  ]);
-  sub.on("event", (event) => {
-    console.log("we got the event we wanted:", event);
+  let event = await relay.get({
+    ids: [threadId],
   });
-  sub.on("eose", () => {
-    sub.unsub();
-  });
-  closeConnectionToRelay(relay);
-  console.log(sub);
+
+  await closeConnectionToRelay(relay);
+
+  let threadDetail = {
+    subject: event.tags[1][1],
+    description: event.tags[2][1],
+    content: event.content,
+    author: event.pubkey,
+  };
+
+  return threadDetail;
+};
+
+export const getComments = async (threadId) => {
+  const relay = await connectToRelay();
+
+  let events = [await relay.get({ "#e": [threadId], kinds: [11] })];
+  await closeConnectionToRelay(relay);
+
+  return events;
 };
 
 export let createForum = async ({ subject, description }) => {
-  const relay = connectToRelay();
+  const relay = await connectToRelay();
 
   let event = {
-    kind: 9,
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
+    kind: 9,
     tags: [
-      ["subject", { subject }],
-      ["description", { description }],
+      ["subject", subject],
+      ["description", description],
     ],
-    content: { content },
+    content: "",
   };
 
   event.id = getEventHash(event);
@@ -130,7 +118,8 @@ export let createForum = async ({ subject, description }) => {
     console.log(`failed to publish to ${relay.url}: ${reason}`);
   });
 
-  closeConnectionToRelay(relay);
+  await closeConnectionToRelay(relay);
+  return event.id;
 };
 
 export let createThread = async ({
@@ -139,18 +128,18 @@ export let createThread = async ({
   description,
   content,
 }) => {
-  const relay = connectToRelay();
+  const relay = await connectToRelay();
 
   let event = {
-    kind: 10,
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
+    kind: 10,
     tags: [
-      ["e", { forumId }],
-      ["subject", { subject }],
-      ["description", { description }],
+      ["e", forumId],
+      ["subject", subject],
+      ["description", description],
     ],
-    content: { content },
+    content: content,
   };
 
   event.id = getEventHash(event);
@@ -164,18 +153,20 @@ export let createThread = async ({
     console.log(`failed to publish to ${relay.url}: ${reason}`);
   });
 
-  closeConnectionToRelay(relay);
+  await closeConnectionToRelay(relay);
+
+  return event.id;
 };
 
 export let createComment = async ({ threadId, content }) => {
-  const relay = connectToRelay();
+  const relay = await connectToRelay();
 
   let event = {
-    kind: 11,
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
-    tags: [["e", { threadId }]],
-    content: { content },
+    kind: 11,
+    tags: [["e", threadId]],
+    content: content,
   };
 
   event.id = getEventHash(event);
@@ -189,5 +180,7 @@ export let createComment = async ({ threadId, content }) => {
     console.log(`failed to publish to ${relay.url}: ${reason}`);
   });
 
-  closeConnectionToRelay(relay);
+  await closeConnectionToRelay(relay);
+
+  return event.id;
 };
