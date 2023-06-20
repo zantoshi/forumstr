@@ -6,11 +6,15 @@ import {
   getSignature,
 } from "nostr-tools";
 
+// Hardcoding for now until we get everything working and then we will switch to browser extension signed events.
+
 let sk = generatePrivateKey(); // `sk` is a hex string
 let pk = getPublicKey(sk); // `pk` is a hex string
 
 export const connectToRelay = async () => {
-  const relay = relayInit("wss://nos.lol");
+  const relay = relayInit("wss://relay.damus.io");
+  await relay.connect();
+
   relay.on("connect", () => {
     console.log(`connected to ${relay.url}`);
   });
@@ -18,25 +22,74 @@ export const connectToRelay = async () => {
     console.log(`failed to connect to ${relay.url}`);
   });
 
-  await relay.connect();
   return relay;
+};
+
+export const fetchThreadOrComments = async (eventList, id, kind) => {
+  const relay = await connectToRelay();
+  let query = { kinds: [kind], "#e": [id] };
+  let sub = relay.sub([query]);
+  sub.on("event", (event) => {
+    console.log(event);
+    eventList.push(event);
+  });
+  sub.on("eose", () => {
+    sub.unsub();
+  });
+};
+
+export const publishEvent = async (event) => {
+  const relay = await connectToRelay();
+
+  let pub = relay.publish(event);
+  pub.on("ok", () => {
+    console.log(`${relay.url} has accepted our event`);
+    return true;
+  });
+  pub.on("failed", (reason) => {
+    console.log(`failed to publish to ${relay.url}: ${reason}`);
+    return false;
+  });
 };
 
 export const closeConnectionToRelay = async (relay) => {
   await relay.close();
 };
 
-export const getForums = async () => {
+// Forums
+export let createForum = async ({ subject, description }) => {
+  console.log("Creating forum");
+
+  let event = {
+    pubkey: pk,
+    created_at: Math.floor(Date.now() / 1000),
+    kind: 9,
+    tags: [
+      ["subject", subject],
+      ["description", description],
+    ],
+    content: "",
+  };
+
+  event.id = getEventHash(event);
+  event.sig = getSignature(event, sk);
+  console.log("Publishing event");
+  await publishEvent(event);
+  console.log("Event published");
+
+  return event.id;
+};
+
+export const getForums = async (eventsList) => {
   const relay = await connectToRelay();
+  let sub = relay.sub([{ kinds: [9] }]);
 
-  let events = [
-    await relay.get({
-      ids: ["52016814e8cbe714c47b76a5bea8876ce2c416a0f6f2eca20785d9460a6c292f"],
-    }),
-  ];
-  await closeConnectionToRelay(relay);
-
-  return events;
+  sub.on("event", (event) => {
+    eventsList.push(event);
+  });
+  sub.on("eose", () => {
+    sub.unsub();
+  });
 };
 
 export const getForumDetail = async (forumId) => {
@@ -56,13 +109,30 @@ export const getForumDetail = async (forumId) => {
   return forumDetail;
 };
 
-export const getThreads = async (forumId) => {
-  const relay = await connectToRelay();
+// Threads
+export let createThread = async ({
+  forumId,
+  subject,
+  description,
+  content,
+}) => {
+  let event = {
+    pubkey: pk,
+    created_at: Math.floor(Date.now() / 1000),
+    kind: 10,
+    tags: [
+      ["e", forumId],
+      ["subject", subject],
+      ["description", description],
+    ],
+    content: content,
+  };
 
-  let events = [await relay.get({ "#e": [forumId], kinds: [10] })];
-  await closeConnectionToRelay(relay);
+  event.id = getEventHash(event);
+  event.sig = getSignature(event, sk);
+  await publishEvent(event);
 
-  return events;
+  return event.id;
 };
 
 export const getThreadDetail = async (threadId) => {
@@ -84,80 +154,7 @@ export const getThreadDetail = async (threadId) => {
   return threadDetail;
 };
 
-export const getComments = async (threadId) => {
-  const relay = await connectToRelay();
-
-  let events = [await relay.get({ "#e": [threadId], kinds: [11] })];
-  await closeConnectionToRelay(relay);
-
-  return events;
-};
-
-export let createForum = async ({ subject, description }) => {
-  const relay = await connectToRelay();
-
-  let event = {
-    pubkey: pk,
-    created_at: Math.floor(Date.now() / 1000),
-    kind: 9,
-    tags: [
-      ["subject", subject],
-      ["description", description],
-    ],
-    content: "",
-  };
-
-  event.id = getEventHash(event);
-  event.sig = getSignature(event, sk);
-
-  let pub = relay.publish(event);
-  pub.on("ok", () => {
-    console.log(`${relay.url} has accepted our event`);
-  });
-  pub.on("failed", (reason) => {
-    console.log(`failed to publish to ${relay.url}: ${reason}`);
-  });
-
-  await closeConnectionToRelay(relay);
-  return event.id;
-};
-
-export let createThread = async ({
-  forumId,
-  subject,
-  description,
-  content,
-}) => {
-  const relay = await connectToRelay();
-
-  let event = {
-    pubkey: pk,
-    created_at: Math.floor(Date.now() / 1000),
-    kind: 10,
-    tags: [
-      ["e", forumId],
-      ["subject", subject],
-      ["description", description],
-    ],
-    content: content,
-  };
-
-  event.id = getEventHash(event);
-  event.sig = getSignature(event, sk);
-
-  let pub = relay.publish(event);
-  pub.on("ok", () => {
-    console.log(`${relay.url} has accepted our event`);
-  });
-  pub.on("failed", (reason) => {
-    console.log(`failed to publish to ${relay.url}: ${reason}`);
-  });
-
-  await closeConnectionToRelay(relay);
-
-  return event.id;
-};
-
+// Comments
 export let createComment = async ({ threadId, content }) => {
   const relay = await connectToRelay();
 

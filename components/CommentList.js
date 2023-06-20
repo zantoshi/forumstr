@@ -1,9 +1,9 @@
-import { getComments } from "@/utils/nostr";
+import { fetchThreadOrComments } from "@/utils/nostr";
 import Comment from "./Comment";
 
 const CommentList = async ({ threadId }) => {
-  let comments = await getComments(threadId);
-  console.log("Comments from commentlist: ", comments);
+  let comments = [];
+  await fetchThreadOrComments(comments, threadId, 11);
   if (comments[0]) {
     return (
       <>

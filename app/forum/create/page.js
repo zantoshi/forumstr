@@ -7,7 +7,6 @@ const create = async (event) => {
   const subject = event.target.elements.subject.value;
   const description = event.target.elements.description.value;
   const forumId = await createForum({ subject, description });
-  console.log("forumId: ", forumId);
 };
 
 export default async function CreateForum() {

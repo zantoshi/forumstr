@@ -1,6 +1,6 @@
 "use client";
 import CommentList from "@/components/CommentList";
-import { createComment, getComments, getThreadDetail } from "@/utils/nostr";
+import { getThreadDetail } from "@/utils/nostr";
 import Link from "next/link";
 
 export default async function Thread({ params }) {

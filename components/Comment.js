@@ -1,7 +1,7 @@
 const Comment = ({ comment, author }) => {
   return (
-    <div>
-      <p class="lead">Author: {author}</p>
+    <div class="container">
+      <p class="lead">{author}</p>
       <p>{comment}</p>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 import { createThread } from "@/utils/nostr";
+import Link from "next/link";
 
 const create = async (event, forumId) => {
   event.preventDefault();
@@ -13,11 +14,15 @@ const create = async (event, forumId) => {
     description,
     content,
   });
+  console.log("Thread created: ", threadId);
 };
 
 export default function CreateThread({ params }) {
   return (
     <div className="container">
+      <Link href={`/forum/${params.forumId}`}>
+        <div className="mt-4">Back to Forum</div>
+      </Link>
       <form onSubmit={(e) => create(e, params.forumId)}>
         <div className="mb-3">
           <label className="form-label">Thread Subject</label>

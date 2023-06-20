@@ -6,7 +6,6 @@ const create = async (event, threadId) => {
   event.preventDefault();
   const content = event.target.elements.content.value;
   const commentId = await createComment({ threadId, content });
-  console.log(commentId);
 };
 
 export default function CreateComment({ params }) {
