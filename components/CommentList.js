@@ -5,7 +5,7 @@ const CommentList = async ({ threadId }) => {
   let comments = [];
   await fetchThreadOrComments(comments, threadId, 11);
   return (
-    <>
+    <div className="row">
       {comments.map((comment) => {
         console.log(comment);
         return (
@@ -16,7 +16,7 @@ const CommentList = async ({ threadId }) => {
           />
         );
       })}
-    </>
+    </div>
   );
 };
 

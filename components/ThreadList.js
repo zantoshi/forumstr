@@ -4,7 +4,6 @@ import { fetchThreadOrComments } from "@/utils/nostr";
 const ThreadList = async ({ forumId }) => {
   let threads = [];
   await fetchThreadOrComments(threads, forumId, 10);
-
   return (
     <div className="row">
       {threads.map((thread) => {

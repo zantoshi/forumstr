@@ -25,12 +25,12 @@ export const connectToRelay = async () => {
   return relay;
 };
 
-export const fetchThreadOrComments = async (eventList, id, kind) => {
+export let fetchThreadOrComments = async (eventsList, id, kind) => {
   const relay = await connectToRelay();
   let query = { kinds: [kind], "#e": [id] };
   let sub = relay.sub([query]);
   sub.on("event", (event) => {
-    eventList.push(event);
+    eventsList.push(event);
   });
   sub.on("eose", () => {
     sub.unsub();
@@ -79,13 +79,13 @@ export let createForum = async ({ subject, description }) => {
   return event.id;
 };
 
-export const getForums = async (eventsList) => {
+export let getForums = async (eventsList) => {
   const relay = await connectToRelay();
   let query = { kinds: [9] };
   let sub = relay.sub([query]);
   sub.on("event", (event) => {
     if (event.tags[0][0] === "subject" && event.tags[1][0] === "description") {
-      eventList.push(event);
+      eventsList.push(event);
     }
   });
   sub.on("eose", () => {
