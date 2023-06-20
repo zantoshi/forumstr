@@ -30,7 +30,6 @@ export const fetchThreadOrComments = async (eventList, id, kind) => {
   let query = { kinds: [kind], "#e": [id] };
   let sub = relay.sub([query]);
   sub.on("event", (event) => {
-    console.log(event);
     eventList.push(event);
   });
   sub.on("eose", () => {
@@ -85,8 +84,9 @@ export const getForums = async (eventsList) => {
   let query = { kinds: [9] };
   let sub = relay.sub([query]);
   sub.on("event", (event) => {
-    console.log(event);
-    eventList.push(event);
+    if (event.tags[0][0] === "subject" && event.tags[1][0] === "description") {
+      eventList.push(event);
+    }
   });
   sub.on("eose", () => {
     sub.unsub();

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getForumDetail, fetchThreadOrComments } from "@/utils/nostr";
+import { getForumDetail } from "@/utils/nostr";
 import ThreadList from "@/components/ThreadList";
 
 export default async function Forum({ params }) {
