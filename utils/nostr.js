@@ -82,10 +82,11 @@ export let createForum = async ({ subject, description }) => {
 
 export const getForums = async (eventsList) => {
   const relay = await connectToRelay();
-  let sub = relay.sub([{ kinds: [9] }]);
-
+  let query = { kinds: [9] };
+  let sub = relay.sub([query]);
   sub.on("event", (event) => {
-    eventsList.push(event);
+    console.log(event);
+    eventList.push(event);
   });
   sub.on("eose", () => {
     sub.unsub();

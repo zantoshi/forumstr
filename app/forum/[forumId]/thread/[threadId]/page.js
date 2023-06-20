@@ -1,4 +1,3 @@
-"use client";
 import CommentList from "@/components/CommentList";
 import { getThreadDetail } from "@/utils/nostr";
 import Link from "next/link";
@@ -11,6 +10,7 @@ export default async function Thread({ params }) {
       <div className="container my-4">
         <Link href={`/forum/${params.forumId}/`}>Back to Forum</Link>
       </div>
+
       <div
         className="container"
         style={{ backgroundColor: "black", color: "white" }}

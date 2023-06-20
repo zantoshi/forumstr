@@ -1,10 +1,14 @@
-"use client";
+import { getForums } from "@/utils/nostr";
 import Forum from "./Forum";
 
-const ForumList = async ({ forums }) => {
+const ForumList = async () => {
+  let forums = [];
+  await getForums(forums);
+
   return (
     <>
       {forums.map((forum) => {
+        console.log(forum);
         try {
           return (
             <Forum
