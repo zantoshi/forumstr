@@ -8,8 +8,8 @@ const ForumList = async () => {
   return (
     <>
       {forums.map((forum) => {
-        console.log(forum);
         try {
+          console.log(forum);
           return (
             <Forum
               subject={forum.tags[0][1]}
