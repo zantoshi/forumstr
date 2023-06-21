@@ -21,8 +21,9 @@ export default async function Thread({ params }) {
 
         <p className="mt-4">{thread.content}</p>
       </div>
-
-      <CommentList threadId={params.threadId} />
+      <div className="container">
+        <CommentList threadId={params.threadId} />
+      </div>
 
       <div className="container my-4">
         <Link

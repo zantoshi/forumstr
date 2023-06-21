@@ -1,25 +1,52 @@
+"use client";
+
+import { connectToRelay } from "@/utils/nostr";
 import Thread from "./Thread";
-import { fetchThreadOrComments } from "@/utils/nostr";
+import { useEffect, useState } from "react";
 
 const ThreadList = async ({ forumId }) => {
-  let threads = [];
-  await fetchThreadOrComments(threads, forumId, 10);
+  const [threads, setThreads] = useState([]);
+
+  useEffect(() => {
+    async function getThreads() {
+      const relay = await connectToRelay();
+      let query = { kinds: [10], "#e": [forumId] };
+      let sub = relay.sub([query]);
+      sub.on("event", (event) => {
+        if (
+          event.tags[1][0] === "subject" &&
+          event.tags[2][0] === "description"
+        ) {
+          let newList = [...threads, event];
+          setThreads(newList);
+          threads.push(event);
+        }
+      });
+      sub.on("eose", () => {
+        sub.unsub();
+        closeConnectionToRelay(relay);
+      });
+    }
+    getThreads();
+  }, []);
   return (
     <div className="row">
-      {threads.map((thread) => {
-        console.log(thread);
-
-        const subject = thread.tags[1][1];
-        const description = thread.tags[2][1];
-        return (
-          <Thread
-            forumId={params.forumId}
-            threadId={thread.id}
-            subject={subject}
-            description={description}
-          />
-        );
-      })}{" "}
+      {threads ? (
+        threads.map((thread) => {
+          console.log("Thread in the map function: ", thread);
+          return (
+            <Thread
+              forumId={forumId}
+              threadId={thread.id}
+              subject={thread.tags[1][1]}
+              description={thread.tags[2][1]}
+              key={thread.id}
+            />
+          );
+        })
+      ) : (
+        <p>No threads found... </p>
+      )}
     </div>
   );
 };

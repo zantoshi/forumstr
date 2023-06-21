@@ -17,12 +17,15 @@ const ForumList = async () => {
           event.tags[0][0] === "subject" &&
           event.tags[1][0] === "description"
         ) {
+          let newList = [...forums, event];
           forums.push(event);
-          setForums(forums);
+          setForums(newList);
         }
       });
       sub.on("eose", () => {
         sub.unsub();
+        setForums(forums);
+        closeConnectionToRelay(relay);
       });
     }
     getForums();
@@ -32,7 +35,7 @@ const ForumList = async () => {
     <div className="row">
       {forums ? (
         forums.map((forum) => {
-          console.log(forum);
+          console.log("Forum in the map function: ", forum);
           return (
             <Forum
               subject={forum.tags[0][1]}
