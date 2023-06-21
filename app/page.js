@@ -7,10 +7,10 @@ export default async function Home() {
       <div className="container">
         <h1>Welcome to forumstr</h1>
         <p>An PoC implementation of nostr forums.</p>
-        <ForumList />
         <Link href="/forum/create/">
           <div className="mt-4">Create Forum</div>
         </Link>
+        <ForumList />
       </div>
     </main>
   );
