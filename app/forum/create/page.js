@@ -1,22 +1,26 @@
 "use client";
 import { createForum } from "@/utils/nostr";
 import Link from "next/link";
-
-const create = async (event) => {
-  event.preventDefault();
-  const subject = event.target.elements.subject.value;
-  const description = event.target.elements.description.value;
-  const forumId = await createForum({ subject, description });
-};
+import { useRouter } from "next/navigation";
 
 export default async function CreateForum() {
+  const router = useRouter();
+
+  const create = async (event) => {
+    event.preventDefault();
+    const subject = event.target.elements.subject.value;
+    const description = event.target.elements.description.value;
+    const forumId = await createForum({ subject, description });
+    router.push(`/forum/${forumId}`);
+  };
+
   return (
     <div className="container">
       <Link href={`/`}>
         <div className="my-4">Back</div>
       </Link>
 
-      <form action="/" method="post" onSubmit={create}>
+      <form onSubmit={create}>
         <div className="mb-3">
           <label className="form-label">Forum Subject</label>
           <input

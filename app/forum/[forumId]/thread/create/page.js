@@ -1,23 +1,26 @@
 "use client";
 import { createThread } from "@/utils/nostr";
 import Link from "next/link";
-
-const create = async (event, forumId) => {
-  event.preventDefault();
-  const subject = event.target.elements.subject.value;
-  const description = event.target.elements.description.value;
-  const content = event.target.elements.content.value;
-
-  const threadId = await createThread({
-    forumId,
-    subject,
-    description,
-    content,
-  });
-  console.log("Thread created: ", threadId);
-};
+import { useRouter } from "next/navigation";
 
 export default function CreateThread({ params }) {
+  const router = useRouter();
+
+  const create = async (event, forumId) => {
+    event.preventDefault();
+    const subject = event.target.elements.subject.value;
+    const description = event.target.elements.description.value;
+    const content = event.target.elements.content.value;
+
+    const threadId = await createThread({
+      forumId,
+      subject,
+      description,
+      content,
+    });
+    router.push(`/forum/${forumId}/thread/${threadId}`);
+  };
+
   return (
     <div className="container">
       <Link href={`/forum/${params.forumId}`}>
