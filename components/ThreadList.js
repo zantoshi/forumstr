@@ -10,7 +10,7 @@ const ThreadList = async ({ forumId }) => {
   useEffect(() => {
     async function getThreads() {
       const relay = await connectToRelay();
-      let query = { kinds: [10], "#e": [forumId] };
+      let query = { kinds: [11], "#e": [forumId] };
       let sub = relay.sub([query]);
       sub.on("event", (event) => {
         if (

@@ -25,18 +25,6 @@ export const connectToRelay = async () => {
   return relay;
 };
 
-export let fetchThreadOrComments = async (eventsList, id, kind) => {
-  const relay = await connectToRelay();
-  let query = { kinds: [kind], "#e": [id] };
-  let sub = relay.sub([query]);
-  sub.on("event", (event) => {
-    return event;
-  });
-  sub.on("eose", () => {
-    sub.unsub();
-  });
-};
-
 export const publishEvent = async (event) => {
   const relay = await connectToRelay();
 
@@ -62,7 +50,7 @@ export let createForum = async ({ subject, description }) => {
   let event = {
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
-    kind: 9,
+    kind: 10,
     tags: [
       ["subject", subject],
       ["description", description],
@@ -77,20 +65,6 @@ export let createForum = async ({ subject, description }) => {
   console.log("Event published");
 
   return event.id;
-};
-
-export let getForums = async () => {
-  const relay = await connectToRelay();
-  let query = { kinds: [9] };
-  let sub = relay.sub([query]);
-  sub.on("event", (event) => {
-    if (event.tags[0][0] === "subject" && event.tags[1][0] === "description") {
-      return event;
-    }
-  });
-  sub.on("eose", () => {
-    sub.unsub();
-  });
 };
 
 export const getForumDetail = async (forumId) => {
@@ -120,7 +94,7 @@ export let createThread = async ({
   let event = {
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
-    kind: 10,
+    kind: 11,
     tags: [
       ["e", forumId],
       ["subject", subject],
@@ -157,28 +131,17 @@ export const getThreadDetail = async (threadId) => {
 
 // Comments
 export let createComment = async ({ threadId, content }) => {
-  const relay = await connectToRelay();
-
   let event = {
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
-    kind: 11,
+    kind: 12,
     tags: [["e", threadId]],
     content: content,
   };
 
   event.id = getEventHash(event);
   event.sig = getSignature(event, sk);
-
-  let pub = relay.publish(event);
-  pub.on("ok", () => {
-    console.log(`${relay.url} has accepted our event`);
-  });
-  pub.on("failed", (reason) => {
-    console.log(`failed to publish to ${relay.url}: ${reason}`);
-  });
-
-  await closeConnectionToRelay(relay);
+  await publishEvent(event);
 
   return event.id;
 };

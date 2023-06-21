@@ -10,7 +10,7 @@ const ForumList = async () => {
   useEffect(() => {
     async function getForums() {
       const relay = await connectToRelay();
-      let query = { kinds: [9] };
+      let query = { kinds: [10] };
       let sub = relay.sub([query]);
       sub.on("event", (event) => {
         if (

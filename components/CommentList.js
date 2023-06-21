@@ -10,7 +10,7 @@ const CommentList = async ({ threadId }) => {
   useEffect(() => {
     async function getComments() {
       const relay = await connectToRelay();
-      let query = { kinds: [11], "#e": [threadId] };
+      let query = { kinds: [12], "#e": [threadId] };
       let sub = relay.sub([query]);
       sub.on("event", (event) => {
         let newList = [...comments, event];
