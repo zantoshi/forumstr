@@ -17,8 +17,8 @@ const ThreadList = async ({ forumId }) => {
           event.tags[1][0] === "subject" &&
           event.tags[2][0] === "description"
         ) {
-          let newList = [...threads, event];
-          setThreads(newList);
+          let threadList = [...threads, event];
+          setThreads(threadList);
           threads.push(event);
         }
       });

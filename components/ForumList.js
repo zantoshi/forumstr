@@ -17,14 +17,13 @@ const ForumList = async () => {
           event.tags[0][0] === "subject" &&
           event.tags[1][0] === "description"
         ) {
-          let newList = [...forums, event];
+          let forumList = [...forums, event];
+          setForums(forumList);
           forums.push(event);
-          setForums(newList);
         }
       });
       sub.on("eose", () => {
         sub.unsub();
-        setForums(forums);
         closeConnectionToRelay(relay);
       });
     }

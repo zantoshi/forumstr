@@ -13,13 +13,12 @@ const CommentList = async ({ threadId }) => {
       let query = { kinds: [12], "#e": [threadId] };
       let sub = relay.sub([query]);
       sub.on("event", (event) => {
-        let newList = [...comments, event];
-        setComments(newList);
+        let commentList = [...comments, event];
+        setComments(commentList);
         comments.push(event);
       });
       sub.on("eose", () => {
         sub.unsub();
-        setComments(comments);
         closeConnectionToRelay(relay);
       });
     }
