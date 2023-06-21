@@ -15,10 +15,10 @@ export default async function Forum({ params }) {
       <div className="container my-6">
         <h3>{forum.subject}</h3>
         <p>{forum.description}</p>
-        <ThreadList forumId={params.forumId} />
         <Link href={`/forum/${params.forumId}/thread/create`}>
           <div className="mt-4">Create Thread</div>
         </Link>
+        <ThreadList forumId={params.forumId} />
       </div>
     </main>
   );
