@@ -1,15 +1,19 @@
 ## Forumstr: A Proof of Concept Forum Built Over nostr
 
 ### Problem
+
 In addition to all of the problems outlined in the [original nostr spec](https://github.com/nostr-protocol/nostr), we can now allow users to self-select and discovery new communities similar to reddit, phpBB, or vBulletin; accommodating a new social app type that users love: Forums. 
 
 ### Vision
+
 We can rebuild the internet that was in my opinion great and solve a lot of the old problems that existed with these forums.
 
 ### Goal
+
 Make the internet feel fun and free again, inspire curiosity and action, and new communities possible.
 
 ### Current Features
+
 You can try it out at [forumstr.lol](https://forumstr.lol) . Right now it just a proof-of-concept (PoC).
 
 - Single Relay
@@ -20,6 +24,7 @@ You can try it out at [forumstr.lol](https://forumstr.lol) . Right now it just a
 - Reading
 
 ### Goal MVP Spec
+
 - New Events
     - Events are super flexible allowing for iterative development starting simple and gradually building out more sophisticated functionality.
     - Build their own aggregated “Reddit” with the forums and communities they most care about.
@@ -45,6 +50,7 @@ You can try it out at [forumstr.lol](https://forumstr.lol) . Right now it just a
     - This is the beauty of open networks and protocols. Apps like Apollo will never run into the Reddit issue ever again. They can start building and testing things right now while running their own relay and connecting to other relays without concern since there isn’t a central party making pricing decisions that can destroy your business.
     
 ### Event Structures:
+
 #### Forums
 ```
   let Forum = {
