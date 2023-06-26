@@ -1,7 +1,7 @@
 ## Forumstr: A Proof of Concept Forum Built Over nostr
 
 ### Problem
-In addition to all of the problems outlined in the (original nostr spec)[https://github.com/nostr-protocol/nostr], we can now allow users to self-select and discovery new communities similar to reddit, phpBB, or vBulletin; accommodating a new social app type that users love: Forums. 
+In addition to all of the problems outlined in the [original nostr spec](https://github.com/nostr-protocol/nostr), we can now allow users to self-select and discovery new communities similar to reddit, phpBB, or vBulletin; accommodating a new social app type that users love: Forums. 
 
 ### Vision
 We can rebuild the internet that was in my opinion great and solve a lot of the old problems that existed with these forums.
@@ -44,7 +44,57 @@ You can try it out at [forumstr.lol](https://forumstr.lol) . Right now it just a
 - Enable multiple forum apps to be built all following the same spec.
     - This is the beauty of open networks and protocols. Apps like Apollo will never run into the Reddit issue ever again. They can start building and testing things right now while running their own relay and connecting to other relays without concern since there isn’t a central party making pricing decisions that can destroy your business.
     
+### Event Structures:
+#### Forums
+```
+  let Forum = {
+    pubkey: "forumCreator",
+    created_at: Math.floor(Date.now() / 1000),
+    kind: 10,
+    tags: [
+        ["subject", "Forum Title"],
+        ["description", "Forum Description"]
+    ],
+    // empty
+    content: "",
+    id = eventId;
+    sig = signature;
+  };
+```
 
+#### Threads
+```
+  let Thread = {
+    pubkey: "threadCreator",
+    created_at: Math.floor(Date.now() / 1000),
+    kind: 11,
+    tags: [
+        ["e", forumEventId]
+        ["subject", "Thread Title"],
+        ["description", "Thread Description"]
+    ],
+    // text note
+    content: "Thread content",
+    id = eventId;
+    sig = signature;
+  };
+```
+
+#### Comments
+```
+  let Comment = {
+    pubkey: "commentCreator",
+    created_at: Math.floor(Date.now() / 1000),
+    kind: 12,
+    tags: [
+        ["e", threadEventId]
+    ],
+    // text note
+    content: "Comment content",
+    id = eventId;
+    sig = signature;
+  };
+```
 
 ## Getting Started
 
