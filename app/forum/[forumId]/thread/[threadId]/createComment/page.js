@@ -3,6 +3,11 @@ import { createComment } from "@/utils/nostr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import PageHeader from "@/components/PageHeader";
+import ButtonSubmit from "@/components/ButtonSubmit";
+import BackButton from "@/components/BackButton";
+import TextArea from "@/components/TextArea";
+
 export default function CreateComment({ params }) {
   const router = useRouter();
 
@@ -14,25 +19,17 @@ export default function CreateComment({ params }) {
   };
 
   return (
-    <div className="container">
-      <Link href={`/forum/${params.forumId}/thread/${params.threadId}/`}>
-        Back to Thread
-      </Link>
+    <div className="flex flex-col m-8 space-y-2">
+      <div className="space-y-2 ">
+        <BackButton />
+        <PageHeader copy="Create a Reply" />
+      </div>
 
       <form onSubmit={(e) => create(e, params.threadId)}>
-        <div className="mb-3">
-          <label className="form-label">Comment</label>
-          <textarea
-            className="form-control"
-            id="commentContent"
-            rows="3"
-            name="content"
-            required
-          ></textarea>
+        <div className="space-y-4">
+          <TextArea copy="Comment Content" name="content" />
+          <ButtonSubmit />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Submit
-        </button>
       </form>
     </div>
   );

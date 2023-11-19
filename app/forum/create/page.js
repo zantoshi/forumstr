@@ -4,10 +4,8 @@ import { createForum } from "@/utils/nostr";
 import PageHeader from "@/components/PageHeader";
 import BackButton from "@/components/BackButton";
 import ButtonSubmit from "@/components/ButtonSubmit";
-
 import TextInput from "@/components/TextInput";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default async function CreateForum() {

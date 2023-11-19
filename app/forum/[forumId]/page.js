@@ -1,4 +1,8 @@
-import Link from "next/link";
+"use client";
+
+import PageHeader from "@/components/PageHeader";
+import PrimaryButton from "@/components/PrimaryButton";
+import BackButton from "@/components/BackButton";
 
 import { getForumDetail } from "@/utils/nostr";
 import ThreadList from "@/components/ThreadList";
@@ -8,16 +12,18 @@ export default async function Forum({ params }) {
   const forum = await getForumDetail(forumId);
 
   return (
-    <main>
-      <div className="container my-4">
-        <Link href={`/`}>Back to Home</Link>
+    <main className="flex flex-col space-y-4 m-8">
+      <div className="space-y-2">
+        <BackButton />
+        <PageHeader copy={forum.title} />
+        <p className="text-base">{forum.description}</p>
       </div>
-      <div className="container my-6">
-        <h3>{forum.subject}</h3>
-        <p>{forum.description}</p>
-        <Link href={`/forum/${params.forumId}/thread/create`}>
-          <div className="mt-4">Create Thread</div>
-        </Link>
+
+      <div>
+        <PrimaryButton
+          copy="Create Thread"
+          link={`/forum/${params.forumId}/thread/create`}
+        />
         <ThreadList forumId={params.forumId} />
       </div>
     </main>

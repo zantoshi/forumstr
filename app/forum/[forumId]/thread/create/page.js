@@ -3,6 +3,12 @@ import { createThread } from "@/utils/nostr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import PageHeader from "@/components/PageHeader";
+import BackButton from "@/components/BackButton";
+import ButtonSubmit from "@/components/ButtonSubmit";
+import TextInput from "@/components/TextInput";
+import TextArea from "@/components/TextArea";
+
 export default function CreateThread({ params }) {
   const router = useRouter();
 
@@ -22,46 +28,28 @@ export default function CreateThread({ params }) {
   };
 
   return (
-    <div className="container">
-      <Link href={`/forum/${params.forumId}`}>
-        <div className="mt-4">Back to Forum</div>
-      </Link>
+    <div className="flex flex-col m-8">
+      <div className="space-y-2 mb-4">
+        <BackButton />
+        <PageHeader copy="Create a Thread" />
+      </div>
+
       <form onSubmit={(e) => create(e, params.forumId)}>
-        <div className="mb-3">
-          <label className="form-label">Thread Title</label>
-          <input
-            type="text"
-            className="form-control"
+        <div className="space-y-4">
+          <TextInput
+            copy="Thread Title"
             name="title"
-            required
-            id="threadTitle"
-            aria-describedby="threadTitle"
+            placeholder="Enter your forum title"
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Thread Description</label>
-          <input
-            type="text"
-            className="form-control"
-            id="threadDescription"
+          <TextInput
+            copy="Thread Description"
             name="description"
-            required
-            aria-describedby="threadDescription"
+            placeholder="Enter your forum description"
           />
+          <TextArea copy="Thread Content" name="content" />
+
+          <ButtonSubmit />
         </div>
-        <div className="mb-3">
-          <label className="form-label">Content</label>
-          <textarea
-            className="form-control"
-            id="threadContent"
-            rows="3"
-            name="content"
-            required
-          ></textarea>
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Submit
-        </button>
       </form>
     </div>
   );
