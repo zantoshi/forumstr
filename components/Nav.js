@@ -1,11 +1,9 @@
+import Link from "next/link";
+
 const Nav = () => {
   return (
-    <nav className="navbar bg-body-tertiary">
-      <div className="container-fluid">
-        <a className="navbar-brand" href="/">
-          forumstr
-        </a>
-      </div>
+    <nav className="flex flex-row text-white align-middle pl-2 py-2 bg-violet-600 border-double border-b-2 border-slate-400 font-semibold">
+      <Link href="/">Forumstr</Link>
     </nav>
   );
 };

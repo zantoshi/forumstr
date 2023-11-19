@@ -8,13 +8,13 @@ export default function CreateThread({ params }) {
 
   const create = async (event, forumId) => {
     event.preventDefault();
-    const subject = event.target.elements.subject.value;
+    const title = event.target.elements.title.value;
     const description = event.target.elements.description.value;
     const content = event.target.elements.content.value;
 
     const threadId = await createThread({
       forumId,
-      subject,
+      title,
       description,
       content,
     });
@@ -28,14 +28,14 @@ export default function CreateThread({ params }) {
       </Link>
       <form onSubmit={(e) => create(e, params.forumId)}>
         <div className="mb-3">
-          <label className="form-label">Thread Subject</label>
+          <label className="form-label">Thread Title</label>
           <input
             type="text"
             className="form-control"
-            name="subject"
+            name="title"
             required
-            id="threadSubject"
-            aria-describedby="threadSubject"
+            id="threadTitle"
+            aria-describedby="threadTitle"
           />
         </div>
         <div className="mb-3">

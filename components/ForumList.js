@@ -10,11 +10,11 @@ const ForumList = async () => {
   useEffect(() => {
     async function getForums() {
       const relay = await connectToRelay();
-      let query = { kinds: [10] };
+      let query = { kinds: [1] };
       let sub = relay.sub([query]);
       sub.on("event", (event) => {
         if (
-          event.tags[0][0] === "subject" &&
+          event.tags[0][0] === "title" &&
           event.tags[1][0] === "description"
         ) {
           let forumList = [...forums, event];
@@ -37,7 +37,7 @@ const ForumList = async () => {
           console.log("Forum in the map function: ", forum);
           return (
             <Forum
-              subject={forum.tags[0][1]}
+              title={forum.tags[0][1]}
               description={forum.tags[1][1]}
               key={forum.id}
               id={forum.id}

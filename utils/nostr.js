@@ -44,16 +44,17 @@ export const closeConnectionToRelay = async (relay) => {
 };
 
 // Forums
-export let createForum = async ({ subject, description }) => {
+export let createForum = async ({ title, description, tag }) => {
   console.log("Creating forum");
 
   let event = {
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
-    kind: 10,
+    kind: 1,
     tags: [
-      ["subject", subject],
+      ["title", title],
       ["description", description],
+      ["f", tag, "forumstr.lol"],
     ],
     content: "",
   };
@@ -77,7 +78,7 @@ export const getForumDetail = async (forumId) => {
   await closeConnectionToRelay(relay);
 
   let forumDetail = {
-    subject: event.tags[0][1],
+    title: event.tags[0][1],
     description: event.tags[1][1],
   };
 
@@ -85,19 +86,14 @@ export const getForumDetail = async (forumId) => {
 };
 
 // Threads
-export let createThread = async ({
-  forumId,
-  subject,
-  description,
-  content,
-}) => {
+export let createThread = async ({ forumId, title, description, content }) => {
   let event = {
     pubkey: pk,
     created_at: Math.floor(Date.now() / 1000),
     kind: 11,
     tags: [
       ["e", forumId],
-      ["subject", subject],
+      ["title", title],
       ["description", description],
     ],
     content: content,
@@ -120,7 +116,7 @@ export const getThreadDetail = async (threadId) => {
   await closeConnectionToRelay(relay);
 
   let threadDetail = {
-    subject: event.tags[1][1],
+    title: event.tags[1][1],
     description: event.tags[2][1],
     content: event.content,
     author: event.pubkey,

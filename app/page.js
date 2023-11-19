@@ -1,15 +1,17 @@
-import Link from "next/link";
 import ForumList from "@/components/ForumList";
+import PageHeader from "@/components/PageHeader";
+import PrimaryButton from "@/components/PrimaryButton";
 
 export default async function Home() {
   return (
     <main>
-      <div className="container">
-        <h1>Welcome to forumstr</h1>
-        <p>An PoC implementation of nostr forums.</p>
-        <Link href="/forum/create/">
-          <div className="mt-4">Create Forum</div>
-        </Link>
+      <div className="flex flex-col">
+        <div className="space-y-2 m-4">
+          <PageHeader copy="Welcome to forumstr" />
+          <p className="text-base">An PoC implementation of nostr forums.</p>
+          <PrimaryButton copy="Create Forum" link="/forum/create" />
+        </div>
+
         <ForumList />
       </div>
     </main>
